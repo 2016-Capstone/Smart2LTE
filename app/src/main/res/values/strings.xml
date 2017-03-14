@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">Smart2LTE</string>
+    <string name="snack_bar_server_port">Server has not bean started on port 3001.</string>
+    <string name="snack_bar_server_connect">Fail to connect server </string>
+    <string name="dialog_title">연결 종료</string>
+    <string name="dialog_contents">연결을 종료하시겠습니까?</string>
+    <string name="dialog_yes">네</string>
+    <string name="dialog_no">아니오</string>
+    <string name="toast_ip">IP 주소를 입력하여 주세요.</string>
+</resources>
