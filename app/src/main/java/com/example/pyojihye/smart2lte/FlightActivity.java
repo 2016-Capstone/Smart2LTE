@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
@@ -49,7 +50,7 @@ public class FlightActivity extends AppCompatActivity {
     private PrintWriter printWriter;
     private BufferedReader bufferedReader;
 
-    boolean ConnectionTrue;
+    private boolean ConnectionTrue;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,8 +73,10 @@ public class FlightActivity extends AppCompatActivity {
 
         ConnectionTrue = false;
         ChatOperator chatOperator = new ChatOperator();
-        chatOperator.execute();
-
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB)
+            chatOperator.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, (Void[])null);
+        else
+            chatOperator.execute();
     }
 
 
@@ -95,16 +98,23 @@ public class FlightActivity extends AppCompatActivity {
 
                         ChatOperator chatOperator = new ChatOperator();
 
-                        text = "32";//항상 랜딩시키고 113 날리도록 만들자 무섭다
+                        text = "32"; //항상 랜딩시키고 연결 종료 메세지 전송
                         chatOperator.MessageSend(text);
 
                         text = "113";
                         chatOperator.MessageSend(text);
 
+                        text = "27";
+                        chatOperator.MessageSend(text);
                     }
                     try {
-                        client.close();
+                        if(!client.isClosed()){
+                            Thread.sleep(100);
+                            client.close();
+                        }
                     } catch (IOException e) {
+                        e.printStackTrace();
+                    } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
                     finish();
@@ -125,10 +135,12 @@ public class FlightActivity extends AppCompatActivity {
     }
 
     private class ChatOperator extends AsyncTask<Void, Void, Void> {
+
         @Override
         protected Void doInBackground(Void... params) {
             try {
                 client = new Socket(IP, PORT);
+//                Log.d("Log","IP : "+IP+"\nPORT:"+PORT);
 
                 if (client != null) {
                     ConnectionTrue = true;
@@ -377,11 +389,11 @@ public class FlightActivity extends AppCompatActivity {
 
         @Override
         protected void onProgressUpdate(Void... values) {
-            Snackbar snackbar = Snackbar.make(findViewById(android.R.id.content), message, Snackbar.LENGTH_LONG);
-            View v = snackbar.getView();
-            TextView textView = (TextView) snackbar.getView().findViewById(android.support.design.R.id.snackbar_text);
-            textView.setTextColor(Color.WHITE);
-            snackbar.show();
+//            Snackbar snackbar = Snackbar.make(findViewById(android.R.id.content), message, Snackbar.LENGTH_LONG);
+//            View v = snackbar.getView();
+//            TextView textView = (TextView) snackbar.getView().findViewById(android.support.design.R.id.snackbar_text);
+//            textView.setTextColor(Color.WHITE);
+//            snackbar.show();
         }
     }
 }

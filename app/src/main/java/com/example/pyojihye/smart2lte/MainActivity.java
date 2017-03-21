@@ -29,16 +29,11 @@ public class MainActivity extends AppCompatActivity {
     final private int MY_PERMISSIONS_REQUEST_READ_CONTACTS = 1;
 
     private EditText editTextIP;
-    private Button buttonConnect;
-
-    private Handler handler;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         editTextIP = (EditText) findViewById(R.id.editTextIP);
-        buttonConnect = (Button) findViewById(R.id.buttonConnect);
     }
 
     public void onButtonConnectClicked(View v) {
@@ -51,24 +46,18 @@ public class MainActivity extends AppCompatActivity {
         if (editTextIP.getText().toString().equals("")) {
             Toast.makeText(getApplicationContext(), getString(R.string.toast_ip), Toast.LENGTH_LONG).show();
         } else {
-            handler = new Handler();
-
             try {
                 setSocket(editTextIP.getText().toString());
                 Intent intentFlight = new Intent(getApplicationContext(), FlightActivity.class);
-                intentFlight.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(intentFlight);
             } catch (Exception e) {
                 e.printStackTrace();
             }
-
         }
     }
 
-    public void setSocket(String editTextIP) throws IOException {
+    public void setSocket(String editTextIP){
         IP = editTextIP.substring(0, editTextIP.lastIndexOf(":"));
         PORT = Integer.parseInt(editTextIP.substring(editTextIP.lastIndexOf(":") + 1, editTextIP.length()));
     }
-
-
 }

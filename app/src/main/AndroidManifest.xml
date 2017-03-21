@@ -21,7 +21,8 @@
         </activity>
 
         <activity
-            android:name=".FlightActivity">
+            android:name=".FlightActivity"
+            android:screenOrientation="landscape">
 
         </activity>
     </application>

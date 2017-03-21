@@ -37,7 +37,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="192.168.0.0:443"
-            android:text="210.125.31.25:9090"
+            android:text="210.125.31.34:443"
             android:ems="15"
             android:id="@+id/editTextIP"
             android:layout_weight="1"
