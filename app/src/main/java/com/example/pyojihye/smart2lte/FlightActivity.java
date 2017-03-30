@@ -51,6 +51,18 @@ public class FlightActivity extends AppCompatActivity {
     private BufferedReader bufferedReader;
 
     private boolean ConnectionTrue;
+    private boolean first;
+
+    static public final String PROTO_DVTYPE_KEY = "DVTYPE";
+    static public final String PROTO_MSG_TYPE_KEY = "MSGTYPE";
+
+    public enum PROTO_DVTYPE {
+        PHONE, DRONE
+    };
+
+    public enum PROTO_MSGTYPE {
+        CMD, GPS, PICTURE, HELLO
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,9 +84,10 @@ public class FlightActivity extends AppCompatActivity {
         buttonLandTakeOff.setText("Take Off");
 
         ConnectionTrue = false;
+        first=false;
         ChatOperator chatOperator = new ChatOperator();
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB)
-            chatOperator.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, (Void[])null);
+            chatOperator.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, (Void[]) null);
         else
             chatOperator.execute();
     }
@@ -98,19 +111,20 @@ public class FlightActivity extends AppCompatActivity {
 
                         ChatOperator chatOperator = new ChatOperator();
 
-                        text = "32"; //항상 랜딩시키고 연결 종료 메세지 전송
+                        text = protocolSet("32", first);
                         chatOperator.MessageSend(text);
 
-                        text = "113";
+                        text = protocolSet("113", first);
                         chatOperator.MessageSend(text);
 
-                        text = "27";
+                        text = protocolSet("27", first);
                         chatOperator.MessageSend(text);
                     }
                     try {
-                        if(!client.isClosed()){
+                        if (!client.isClosed()) {
                             Thread.sleep(100);
                             client.close();
+                            first=false;
                         }
                     } catch (IOException e) {
                         e.printStackTrace();
@@ -147,6 +161,9 @@ public class FlightActivity extends AppCompatActivity {
                     printWriter = new PrintWriter(client.getOutputStream(), true);
                     InputStreamReader inputStreamReader = new InputStreamReader((client.getInputStream()));
                     bufferedReader = new BufferedReader(inputStreamReader);
+                    String text = protocolSet("", first);
+                    MessageSend(text);
+                    first=true;
                 } else {
                     Toast.makeText(getApplicationContext(), getString(R.string.snack_bar_server_port), Toast.LENGTH_LONG).show();
                 }
@@ -172,7 +189,7 @@ public class FlightActivity extends AppCompatActivity {
             buttonEmergency.setOnClickListener(new View.OnClickListener() {
                 public void onClick(View v) {
                     if (ConnectionTrue) {
-                        String text = "101";
+                        String text = protocolSet("101", first);
                         MessageSend(text);
                     }
                 }
@@ -185,12 +202,12 @@ public class FlightActivity extends AppCompatActivity {
 
                     if (buttonLandTakeOff.getText() == "Take Off") {
                         ConnectionTrue = true;
-                        text = "116";
+                        text = protocolSet("116", first);
                         buttonLandTakeOff.setText("Landing");
 
                     } else {
                         ConnectionTrue = false;
-                        text = "32";
+                        text = protocolSet("32", first);
                         buttonLandTakeOff.setText("Take Off");
                     }
                     MessageSend(text);
@@ -200,7 +217,7 @@ public class FlightActivity extends AppCompatActivity {
             buttonForward.setOnTouchListener(new View.OnTouchListener() {
                 @Override
                 public boolean onTouch(View v, MotionEvent event) {
-                    String text = "114";
+                    String text = protocolSet("114", first);
                     switch (event.getAction()) {
                         case MotionEvent.ACTION_DOWN:
                             if (ConnectionTrue) {
@@ -218,7 +235,7 @@ public class FlightActivity extends AppCompatActivity {
             buttonBack.setOnTouchListener(new View.OnTouchListener() {
                 @Override
                 public boolean onTouch(View v, MotionEvent event) {
-                    String text = "102";
+                    String text = protocolSet("102", first);
                     switch (event.getAction()) {
                         case MotionEvent.ACTION_DOWN:
                             if (ConnectionTrue) {
@@ -236,7 +253,7 @@ public class FlightActivity extends AppCompatActivity {
             buttonRollLeft.setOnTouchListener(new View.OnTouchListener() {
                 @Override
                 public boolean onTouch(View v, MotionEvent event) {
-                    String text = "100";
+                    String text = protocolSet("100", first);
                     switch (event.getAction()) {
                         case MotionEvent.ACTION_DOWN:
                             if (ConnectionTrue) {
@@ -254,7 +271,7 @@ public class FlightActivity extends AppCompatActivity {
             buttonRollRight.setOnTouchListener(new View.OnTouchListener() {
                 @Override
                 public boolean onTouch(View v, MotionEvent event) {
-                    String text = "103";
+                    String text = protocolSet("103", first);
                     switch (event.getAction()) {
                         case MotionEvent.ACTION_DOWN:
                             if (ConnectionTrue) {
@@ -272,7 +289,7 @@ public class FlightActivity extends AppCompatActivity {
             buttonUp.setOnTouchListener(new View.OnTouchListener() {
                 @Override
                 public boolean onTouch(View v, MotionEvent event) {
-                    String text = "65";
+                    String text = protocolSet("65", first);
                     switch (event.getAction()) {
                         case MotionEvent.ACTION_DOWN:
                             if (ConnectionTrue) {
@@ -290,7 +307,7 @@ public class FlightActivity extends AppCompatActivity {
             buttonDown.setOnTouchListener(new View.OnTouchListener() {
                 @Override
                 public boolean onTouch(View v, MotionEvent event) {
-                    String text = "66";
+                    String text = protocolSet("66", first);
                     switch (event.getAction()) {
                         case MotionEvent.ACTION_DOWN:
                             if (ConnectionTrue) {
@@ -308,7 +325,7 @@ public class FlightActivity extends AppCompatActivity {
             buttonRight.setOnTouchListener(new View.OnTouchListener() {
                 @Override
                 public boolean onTouch(View v, MotionEvent event) {
-                    String text = "67";
+                    String text = protocolSet("67", first);
                     switch (event.getAction()) {
                         case MotionEvent.ACTION_DOWN:
                             if (ConnectionTrue) {
@@ -326,7 +343,7 @@ public class FlightActivity extends AppCompatActivity {
             buttonLeft.setOnTouchListener(new View.OnTouchListener() {
                 @Override
                 public boolean onTouch(View v, MotionEvent event) {
-                    String text = "68";
+                    String text = protocolSet("68", first);
                     switch (event.getAction()) {
                         case MotionEvent.ACTION_DOWN:
                             if (ConnectionTrue) {
@@ -348,7 +365,7 @@ public class FlightActivity extends AppCompatActivity {
         }
 
         private void DroneDefault() {
-            String text = "-1";
+            String text = protocolSet("-1", first);
             MessageSend(text);
         }
     }
@@ -395,5 +412,15 @@ public class FlightActivity extends AppCompatActivity {
 //            textView.setTextColor(Color.WHITE);
 //            snackbar.show();
         }
+    }
+
+    private String protocolSet(String str, boolean first) {
+        String msg = "";
+        if (!first) { //첫 연결
+            msg = PROTO_DVTYPE_KEY + "=" + PROTO_DVTYPE.PHONE.ordinal() + "%%" + PROTO_MSG_TYPE_KEY + "=" + PROTO_MSGTYPE.HELLO.ordinal();
+        } else {
+            msg = PROTO_DVTYPE_KEY + "=" + PROTO_DVTYPE.PHONE.ordinal() + "%%" + PROTO_MSG_TYPE_KEY + "=" + PROTO_MSGTYPE.CMD.ordinal() + "%%DATA=" + str;
+        }
+        return msg;
     }
 }
